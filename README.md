@@ -8,9 +8,8 @@ it unlocks control over blur and saturation intensity, and provides **two additi
 - **variable**: blur with gradient mask and customizable gradient points
 - **plain**: clean gaussian blur without any additional effects (saturation, tint, grain etc.)
 
-| |  |
+| <video width="246" alt="1" src="https://github.com/user-attachments/assets/7ab36d8c-9735-4782-b31f-b3612f129fb1"> | <video width="246" alt="2" src="https://github.com/user-attachments/assets/836c0cbb-a148-483b-95bd-d5e4d8d16b1a">|
 |------------------------------------------------------------------------------------------|-------|
-| <img width="246" alt="1" src="https://github.com/user-attachments/assets/7ab36d8c-9735-4782-b31f-b3612f129fb1"> | <img width="246" alt="2" src="https://github.com/user-attachments/assets/836c0cbb-a148-483b-95bd-d5e4d8d16b1a">|
 
 If you still want to use it, you can install it directly from GitHub. Add following to your `package.json`:
 
