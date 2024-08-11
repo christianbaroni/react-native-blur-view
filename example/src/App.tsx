@@ -41,7 +41,7 @@ export const App = () => (
 );
 
 const TOP_INSET = 70;
-const BOTTOM_INSET = 100;
+const BOTTOM_INSET = 60;
 
 const styles = StyleSheet.create({
   bottom: {
