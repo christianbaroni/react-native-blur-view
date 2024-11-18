@@ -7,16 +7,44 @@ const LINKING_ERROR =
   '- You are not using Expo Go\n';
 
 export const BlurViewStyles = [
-  'variable', // default
+  /* Custom styles */
   'plain',
-  'regular',
-  'light',
-  'extraLight',
+  'variable',
+  
+  /* Standard styles */
   'dark',
+  'extraDark',
+  'extraLight',
+  'light',
+  'prominent',
+  'regular',
+
+  /* Appearance-based materials */
+  'chromeMaterial',
+  'material',
+  'thickMaterial',
+  'thinMaterial',
+  'ultraThinMaterial',
+  
+  /* Light materials */
+  'chromeMaterialLight',
+  'materialLight',
+  'thickMaterialLight',
+  'thinMaterialLight',
+  'ultraThinMaterialLight',
+  
+  /* Dark materials */
+  'chromeMaterialDark',
+  'materialDark',
+  'thickMaterialDark',
+  'thinMaterialDark',
+  'ultraThinMaterialDark',
 ] as const;
 
+export type BlurStyle = typeof BlurViewStyles[number];  
+
 export type BlurViewProps = {
-  blurStyle?: typeof BlurViewStyles[number];
+  blurStyle?: BlurStyle;
   blurIntensity?: number;
   saturationIntensity?: number;
   gradientPoints?: [

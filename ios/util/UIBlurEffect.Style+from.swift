@@ -11,35 +11,35 @@ extension UIBlurEffect.Style {
       return .regular
     case "prominent":
       return .prominent
-    case "systemUltraThinMaterial":
+    case "ultraThinMaterial":
       return .systemUltraThinMaterial
-    case "systemThinMaterial":
+    case "thinMaterial":
       return .systemThinMaterial
-    case "systemMaterial":
+    case "material":
       return .systemMaterial
-    case "systemThickMaterial":
+    case "thickMaterial":
       return .systemThickMaterial
-    case "systemChromeMaterial":
+    case "chromeMaterial":
       return .systemChromeMaterial
-    case "systemUltraThinMaterialLight":
+    case "ultraThinMaterialLight":
       return .systemUltraThinMaterialLight
-    case "systemThinMaterialLight":
+    case "thinMaterialLight":
       return .systemThinMaterialLight
-    case "systemMaterialLight":
+    case "materialLight":
       return .systemMaterialLight
-    case "systemThickMaterialLight":
+    case "thickMaterialLight":
       return .systemThickMaterialLight
-    case "systemChromeMaterialLight":
+    case "chromeMaterialLight":
       return .systemChromeMaterialLight
-    case "systemUltraThinMaterialDark":
+    case "ultraThinMaterialDark":
       return .systemUltraThinMaterialDark
-    case "systemThinMaterialDark":
+    case "thinMaterialDark":
       return .systemThinMaterialDark
-    case "systemMaterialDark":
+    case "materialDark":
       return .systemMaterialDark
-    case "systemThickMaterialDark":
+    case "thickMaterialDark":
       return .systemThickMaterialDark
-    case "systemChromeMaterialDark":
+    case "chromeMaterialDark":
       return .systemChromeMaterialDark
     default:
       return .regular
