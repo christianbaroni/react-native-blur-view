@@ -14,11 +14,9 @@ import consts from './consts';
 const AnimatedBlurView = Animated.createAnimatedComponent(BlurView);
 
 export const DynamicExample = () => {
-
   const [blurStyle, setBlurStyle] = React.useState<typeof BlurViewStyles[number]>('regular');
   const jumpingTitleRef = React.useRef<JumpingTitle>(null);
 
-  const fadePercent = useSharedValue(1);
   const blurIntensity = useSharedValue(0);
   const saturationIntensity = useSharedValue(0);
 
@@ -31,7 +29,6 @@ export const DynamicExample = () => {
   const animatedProps = useAnimatedProps<BlurViewProps>(() => ({
     saturationIntensity: saturationIntensity.value,
     blurIntensity: blurIntensity.value,
-    fadePercent: fadePercent.value,
   }), []);
 
   const blurValueText = useDerivedValue(() => {
@@ -77,7 +74,6 @@ export const DynamicExample = () => {
           </Text>
         </TouchableOpacity>
       </View>
-
       <Text style={styles.label}>
         Blur intensity
       </Text>
@@ -87,7 +83,6 @@ export const DynamicExample = () => {
         minimumTrackTintColor={consts.color.accent as unknown as string}
         onValueChange={(value) => blurIntensity.value = value}
       />
-
       <Text style={styles.label}>
         Saturation intensity
       </Text>
@@ -105,7 +100,6 @@ const styles = StyleSheet.create({
   container: {
     width: consts.screen.width - 40,
     height: consts.screen.width / 2,
-
     marginBottom: 24,
     marginHorizontal: 20,
     overflow: 'hidden',
@@ -130,10 +124,8 @@ const styles = StyleSheet.create({
     width: 138,
     position: 'absolute',
     bottom: 10, left: 10,
-
     paddingVertical: 8,
     paddingHorizontal: 14,
-
     borderRadius: 18,
     borderCurve: 'continuous',
     backgroundColor: '#ffffff55',
@@ -147,13 +139,10 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 10, right: 10,
     width: 40, height: 40,
-
     justifyContent: 'center',
     alignItems: 'center',
-
     borderRadius: 20,
     borderCurve: 'continuous',
-
     backgroundColor: '#ffffff55',
   },
   boldText: {
