@@ -5,13 +5,14 @@
 
 > ⚠️ **iOS only**
 
-React Native blur view that extends standard iOS `UIVisualEffectView`. Besides regular blur styles (light, dark, etc.) 
+React Native blur view that extends standard iOS `UIVisualEffectView`. Besides regular blur styles (light, dark, etc.)
 it unlocks control over blur and saturation intensity, and provides **two additional styles**:
+
 - **variable**: blur with gradient mask and customizable gradient points
 - **plain**: clean gaussian blur without any additional effects (saturation, tint, grain etc.)
 
-| <video src="https://github.com/user-attachments/assets/7ab36d8c-9735-4782-b31f-b3612f129fb1"> | <video src="https://github.com/user-attachments/assets/836c0cbb-a148-483b-95bd-d5e4d8d16b1a">|
-|-|-|
+| <video src="https://github.com/user-attachments/assets/7ab36d8c-9735-4782-b31f-b3612f129fb1"> | <video src="https://github.com/user-attachments/assets/836c0cbb-a148-483b-95bd-d5e4d8d16b1a"> |
+|-----------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------|
 
 If you still want to use it, you can install it directly from GitHub. Add following to your `package.json`:
 
@@ -38,11 +39,15 @@ import { BlurView } from 'react-native-blur-view';
 
 ## Props
 
-| Name                  | Type                                                                        | Default     | Description                                                                                                                        |
-|-----------------------|-----------------------------------------------------------------------------|-------------|------------------------------------------------------------------------------------------------------------------------------------|
-| `blurStyle`           | `variable \| plain \| regular \| light \| extraLight \| dark` | `variable`  | Blur style.                                                                                                                        |
-| `blurIntensity`       | `number`                                                                    | `10.0`      | Blur intensity. Varies from `0.0` to `100.0`                                                                                       |
-| `saturationIntensity` | `number`                                                                    | `1.0`       | Saturation intensity. Varies from `0.0` to `3.0`                                                                                   |
-| `gradientPoints`      | `[{ x: number, y: number }, { x: number, y: number }]`                                              | `undefined` | Gradient points for `variable` blur style. If not provided, gradient mask will be stretched to view height in bottom-top direction |
-| `style`               | `ViewStyle`                                                                 | `undefined` | Style for the view.                                                                                                                |
-
+- `blurStyle?: plain | extraLight | light | dark | regular | prominent` 
+  - default: `regular`
+- `blurIntensity?: [0.0, 100.0]` 
+  - default: `10`
+- `saturationIntensity?: [0.0, 3.0]` 
+  - default: `1`
+- `fadePercent?: [0.0, 1.0]` 
+  - default: `0`
+- `fadeStyle?: bottom | top | left | right` 
+  - default: `top`
+- `style?: StyleProp<ViewStyle>`
+  - default: `undefined`
