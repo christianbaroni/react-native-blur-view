@@ -15,9 +15,10 @@ const AnimatedBlurView = Animated.createAnimatedComponent(BlurView);
 
 export const DynamicExample = () => {
 
-  const [blurStyle, setBlurStyle] = React.useState<typeof BlurViewStyles[number]>('variable');
+  const [blurStyle, setBlurStyle] = React.useState<typeof BlurViewStyles[number]>('regular');
   const jumpingTitleRef = React.useRef<JumpingTitle>(null);
 
+  const fadePercent = useSharedValue(1);
   const blurIntensity = useSharedValue(0);
   const saturationIntensity = useSharedValue(0);
 
@@ -30,6 +31,7 @@ export const DynamicExample = () => {
   const animatedProps = useAnimatedProps<BlurViewProps>(() => ({
     saturationIntensity: saturationIntensity.value,
     blurIntensity: blurIntensity.value,
+    fadePercent: fadePercent.value,
   }), []);
 
   const blurValueText = useDerivedValue(() => {
@@ -55,10 +57,6 @@ export const DynamicExample = () => {
           style={styles.blur}
           blurStyle={blurStyle}
           animatedProps={animatedProps}
-          gradientPoints={[
-            { x: 0, y: 0 },
-            { x: 0, y: consts.screen.width / 3 },
-          ]}
         />
         <View style={styles.text}>
           <AnimatedText
@@ -125,8 +123,8 @@ const styles = StyleSheet.create({
   },
   blur: {
     position: 'absolute',
-    bottom: 0, left: 0, right: 0,
-    height: consts.screen.width,
+    width: "100%",
+    height: "100%",
   },
   text: {
     width: 138,

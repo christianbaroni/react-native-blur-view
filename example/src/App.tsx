@@ -19,12 +19,10 @@ export const App = () => (
       style={styles.top}
     >
       <BlurView
+        fadeStyle={'bottom'}
+        fadePercent={1}
         blurIntensity={4}
         style={StyleSheet.absoluteFill}
-        gradientPoints={[
-          { x: 0, y: TOP_INSET },
-          { x: 0, y: 0 },
-        ]}
       />
     </View>
 
@@ -33,6 +31,7 @@ export const App = () => (
       style={styles.bottom}
     >
       <BlurView
+        fadePercent={1}
         blurIntensity={4}
         style={StyleSheet.absoluteFill}
       />
@@ -67,4 +66,4 @@ const styles = StyleSheet.create({
   },
 });
 
-const text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.";
+const text = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.';
