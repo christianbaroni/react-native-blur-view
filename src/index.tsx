@@ -6,28 +6,15 @@ const LINKING_ERROR =
   "- You rebuilt the app after installing the package\n" +
   "- You are not using Expo Go\n";
 
-export const BlurViewStyles = [
-  "plain",
-  "extraLight",
-  "light",
-  "dark",
-  "regular", // default
-  "prominent",
-] as const;
-
-export const FadeStyles = [
-  "top", // default
-  "bottom",
-  "left",
-  "right",
-] as const;
+export type BlurViewStyle = 'plain' | 'extraLight' | 'light' | 'dark' | 'regular' | 'prominent';
+export type FadeStyle = 'top' | 'bottom' | 'left' | 'right';
 
 export type BlurViewProps = {
-  blurStyle?: typeof BlurViewStyles[number];
+  blurStyle?: BlurViewStyle;
   blurIntensity?: number;
   saturationIntensity?: number;
   fadePercent?: number;
-  fadeStyle?: typeof FadeStyles[number];
+  fadeStyle?: FadeStyle;
   style?: StyleProp<ViewStyle>;
 };
 

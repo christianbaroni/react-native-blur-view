@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Image, Text, StyleSheet, TouchableOpacity } from 'react-native';
 
 import Slider from '@react-native-community/slider';
-import { BlurView, type BlurViewProps, BlurViewStyles } from 'react-native-blur-view';
+import { BlurView, type BlurViewProps, type BlurViewStyle } from 'react-native-blur-view';
 import Animated, { useSharedValue, useAnimatedProps, useDerivedValue } from 'react-native-reanimated';
 
 import { AnimatedText } from './AnimatedText';
@@ -11,19 +11,28 @@ import { JumpingTitle } from './JumpingTitle';
 import { img } from '../assets';
 import consts from './consts';
 
+const blurStyles = [
+  "plain",
+  "extraLight",
+  "light",
+  "dark",
+  "regular",
+  "prominent",
+] as const;
+
 const AnimatedBlurView = Animated.createAnimatedComponent(BlurView);
 
 export const DynamicExample = () => {
-  const [blurStyle, setBlurStyle] = React.useState<typeof BlurViewStyles[number]>('regular');
+  const [blurStyle, setBlurStyle] = React.useState<BlurViewStyle>('regular');
   const jumpingTitleRef = React.useRef<JumpingTitle>(null);
 
   const blurIntensity = useSharedValue(0);
   const saturationIntensity = useSharedValue(0);
 
   const switchStyle = () => {
-    const i = (BlurViewStyles.indexOf(blurStyle) + 1) % 3;
-    setBlurStyle(BlurViewStyles[i]!);
-    jumpingTitleRef.current?.setText(BlurViewStyles[i]!.charAt(0).toUpperCase() + BlurViewStyles[i]!.slice(1));
+    const i = (blurStyles.indexOf(blurStyle) + 1) % 3;
+    setBlurStyle(blurStyles[i]!);
+    jumpingTitleRef.current?.setText(blurStyle[i]!.charAt(0).toUpperCase() + blurStyle[i]!.slice(1));
   };
 
   const animatedProps = useAnimatedProps<BlurViewProps>(() => ({
