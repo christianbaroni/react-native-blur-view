@@ -4,7 +4,6 @@ import Animated, { useAnimatedStyle, useSharedValue, withTiming, runOnJS, interp
 import consts from './consts';
 
 const Component = React.forwardRef<JumpingTitle, Props>(({ initialText }, ref) => {
-
   const sv = useSharedValue(0);
   const [text, setText] = React.useState(initialText);
 

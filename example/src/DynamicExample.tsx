@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Image, Text, StyleSheet, TouchableOpacity } from 'react-native';
 
 import Slider from '@react-native-community/slider';
-import { BlurView, type BlurViewProps, BlurViewStyles } from 'react-native-blur-view';
+import { BlurView, type BlurViewProps, type BlurViewStyle } from 'react-native-blur-view';
 import Animated, { useSharedValue, useAnimatedProps, useDerivedValue } from 'react-native-reanimated';
 
 import { AnimatedText } from './AnimatedText';
@@ -11,20 +11,28 @@ import { JumpingTitle } from './JumpingTitle';
 import { img } from '../assets';
 import consts from './consts';
 
+const blurStyles = [
+  "plain",
+  "extraLight",
+  "light",
+  "dark",
+  "regular",
+  "prominent",
+] as const;
+
 const AnimatedBlurView = Animated.createAnimatedComponent(BlurView);
 
 export const DynamicExample = () => {
-
-  const [blurStyle, setBlurStyle] = React.useState<typeof BlurViewStyles[number]>('variable');
+  const [blurStyle, setBlurStyle] = React.useState<BlurViewStyle>('regular');
   const jumpingTitleRef = React.useRef<JumpingTitle>(null);
 
   const blurIntensity = useSharedValue(0);
   const saturationIntensity = useSharedValue(0);
 
   const switchStyle = () => {
-    const i = (BlurViewStyles.indexOf(blurStyle) + 1) % 3;
-    setBlurStyle(BlurViewStyles[i]!);
-    jumpingTitleRef.current?.setText(BlurViewStyles[i]!.charAt(0).toUpperCase() + BlurViewStyles[i]!.slice(1));
+    const i = (blurStyles.indexOf(blurStyle) + 1) % 3;
+    setBlurStyle(blurStyles[i]!);
+    jumpingTitleRef.current?.setText(blurStyle[i]!.charAt(0).toUpperCase() + blurStyle[i]!.slice(1));
   };
 
   const animatedProps = useAnimatedProps<BlurViewProps>(() => ({
@@ -55,10 +63,6 @@ export const DynamicExample = () => {
           style={styles.blur}
           blurStyle={blurStyle}
           animatedProps={animatedProps}
-          gradientPoints={[
-            { x: 0, y: 0 },
-            { x: 0, y: consts.screen.width / 3 },
-          ]}
         />
         <View style={styles.text}>
           <AnimatedText
@@ -79,7 +83,6 @@ export const DynamicExample = () => {
           </Text>
         </TouchableOpacity>
       </View>
-
       <Text style={styles.label}>
         Blur intensity
       </Text>
@@ -89,7 +92,6 @@ export const DynamicExample = () => {
         minimumTrackTintColor={consts.color.accent as unknown as string}
         onValueChange={(value) => blurIntensity.value = value}
       />
-
       <Text style={styles.label}>
         Saturation intensity
       </Text>
@@ -107,7 +109,6 @@ const styles = StyleSheet.create({
   container: {
     width: consts.screen.width - 40,
     height: consts.screen.width / 2,
-
     marginBottom: 24,
     marginHorizontal: 20,
     overflow: 'hidden',
@@ -125,17 +126,15 @@ const styles = StyleSheet.create({
   },
   blur: {
     position: 'absolute',
-    bottom: 0, left: 0, right: 0,
-    height: consts.screen.width,
+    width: "100%",
+    height: "100%",
   },
   text: {
     width: 138,
     position: 'absolute',
     bottom: 10, left: 10,
-
     paddingVertical: 8,
     paddingHorizontal: 14,
-
     borderRadius: 18,
     borderCurve: 'continuous',
     backgroundColor: '#ffffff55',
@@ -149,13 +148,10 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 10, right: 10,
     width: 40, height: 40,
-
     justifyContent: 'center',
     alignItems: 'center',
-
     borderRadius: 20,
     borderCurve: 'continuous',
-
     backgroundColor: '#ffffff55',
   },
   boldText: {

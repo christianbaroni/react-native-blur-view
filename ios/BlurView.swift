@@ -1,64 +1,71 @@
 class BlurView : UIView {
+  private let viewTag = 1
   
-  @objc var gradientPoints: NSArray? { didSet {
-    if let view = viewWithTag(VIEW_TAG) as? VariableBlurView, let points = gradientPoints {
-      view.setGradientPoints(points)
+  @objc var fadePercent: CGFloat = 0 { didSet {
+    if let view = viewWithTag(viewTag) as? Blur {
+      view.setFadePercent(fadePercent)
     }
   }}
   
-  @objc var blurStyle: NSString = DEFAULT_BLUR_STYLE { didSet {
-    if let view = viewWithTag(VIEW_TAG) {
-      view.removeFromSuperview()
-    }
-    addSubview(createBlurView(blurStyle))
-  }}
-  
-  @objc var blurIntensity = DEFAULT_BLUR_INTENSITY { didSet {
-    if let view = viewWithTag(VIEW_TAG) as? BaseBlurView {
-      view.setBlurIntensity(
-        clamp(blurIntensity, min: MIN_BLUR_INTENSITY, max: MAX_BLUR_INTENSITY)
-      )
+  @objc var fadeStyle: NSString = "top" { didSet {
+    if let view = viewWithTag(viewTag) as? Blur {
+      view.setFadeStyle(FadeStyle.from(style: fadeStyle))
     }
   }}
   
-  @objc var saturationIntensity: CGFloat = DEFAULT_SATURATION_INTENSITY { didSet {
-    if let view = viewWithTag(VIEW_TAG) as? BaseBlurView {
-      view.setSaturationIntensity(
-        clamp(saturationIntensity, min: MIN_SATURATION_INTENSITY, max: MAX_SATURATION_INTENSITY)
-      )
+  @objc var blurStyle: NSString = "regular" { didSet {
+    if let view = viewWithTag(viewTag) as? Blur {
+      view.setEffectViewWith(blurType: blurStyle)
+    }
+  }}
+  
+  @objc var blurIntensity = 10.0 { didSet {
+    if let view = viewWithTag(viewTag) as? Blur {
+      view.setBlurIntensity(blurIntensity)
+    }
+  }}
+  
+  @objc var saturationIntensity: CGFloat = 1.0 { didSet {
+    if let view = viewWithTag(viewTag) as? Blur {
+      view.setSaturationIntensity(saturationIntensity)
     }
   }}
   
   override init(frame: CGRect) {
     super.init(frame: frame)
-    addSubview(createBlurView(blurStyle))
+    
+    let blur = Blur(frame, blurStyle)
+    blur.tag = viewTag
+    blur.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+    
+    addSubview(blur)
   }
   
   required init?(coder: NSCoder) {
     fatalError("init(coder:) has not been implemented")
   }
   
-  private func createBlurView(_ type: NSString) -> UIView {
-    let clampedBlur = clamp(blurIntensity, min: MIN_BLUR_INTENSITY, max: MAX_BLUR_INTENSITY)
-    let clampedSaturation = clamp(saturationIntensity, min: MIN_SATURATION_INTENSITY, max: MAX_SATURATION_INTENSITY)
+  // private func createBlurView(_ type: NSString) -> UIView {
+  //   let clampedBlur = clamp(blurIntensity, min: MIN_BLUR_INTENSITY, max: MAX_BLUR_INTENSITY)
+  //   let clampedSaturation = clamp(saturationIntensity, min: MIN_SATURATION_INTENSITY, max: MAX_SATURATION_INTENSITY)
     
-    let style = UIBlurEffect.Style.from(string: type)
-    let isSystemMaterial = type.lowercased.contains("material")
+  //   let style = UIBlurEffect.Style.from(string: type)
+  //   let isSystemMaterial = type.lowercased.contains("material")
     
-    let blur = if type == PLAIN_BLUR_STYLE {
-      PlainBlurView(frame, clampedBlur, clampedSaturation)
-    } else if type == VARIABLE_BLUR_STYLE {
-      VariableBlurView(frame, clampedBlur, clampedSaturation, gradientPoints)
-    } else if isSystemMaterial {
-      SystemBlurView(frame, style)
-    } else {
-      RegularBlurView(frame, clampedBlur, clampedSaturation, style)
-    }
+  //   let blur = if type == PLAIN_BLUR_STYLE {
+  //     PlainBlurView(frame, clampedBlur, clampedSaturation)
+  //   } else if type == VARIABLE_BLUR_STYLE {
+  //     VariableBlurView(frame, clampedBlur, clampedSaturation, gradientPoints)
+  //   } else if isSystemMaterial {
+  //     SystemBlurView(frame, style)
+  //   } else {
+  //     RegularBlurView(frame, clampedBlur, clampedSaturation, style)
+  //   }
     
-    blur.tag = VIEW_TAG
-    blur.frame = bounds
-    blur.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+  //   blur.tag = VIEW_TAG
+  //   blur.frame = bounds
+  //   blur.autoresizingMask = [.flexibleWidth, .flexibleHeight]
     
-    return blur
-  }
+  //   return blur
+  // }
 }
