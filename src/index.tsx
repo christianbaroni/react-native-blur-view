@@ -8,41 +8,40 @@ const LINKING_ERROR =
 
 export const BlurViewStyles = [
   /* Custom styles */
-  'plain',
-  'variable',
-  
+  "plain",
+  "variable",
+
   /* Standard styles */
-  'dark',
-  'extraDark', // Maybe not anymore
-  'extraLight',
-  'light',
-  'prominent',
-  'regular',
+  "dark",
+  "extraLight",
+  "light",
+  "prominent",
+  "regular",
 
   /* Appearance-based materials */
-  'chromeMaterial',
-  'material',
-  'thickMaterial',
-  'thinMaterial',
-  'ultraThinMaterial',
-  
+  "chromeMaterial",
+  "material",
+  "thickMaterial",
+  "thinMaterial",
+  "ultraThinMaterial",
+
   /* Light materials */
-  'chromeMaterialLight',
-  'materialLight',
-  'thickMaterialLight',
-  'thinMaterialLight',
-  'ultraThinMaterialLight',
-  
+  "chromeMaterialLight",
+  "materialLight",
+  "thickMaterialLight",
+  "thinMaterialLight",
+  "ultraThinMaterialLight",
+
   /* Dark materials */
-  'chromeMaterialDark',
-  'materialDark',
-  'thickMaterialDark',
-  'thinMaterialDark',
-  'ultraThinMaterialDark',
+  "chromeMaterialDark",
+  "materialDark",
+  "thickMaterialDark",
+  "thinMaterialDark",
+  "ultraThinMaterialDark",
 ] as const;
 
-export type BlurStyle = typeof BlurViewStyles[number];
-export type FadeStyle = 'top' | 'bottom' | 'left' | 'right';
+export type BlurStyle = (typeof BlurViewStyles)[number];
+export type FadeStyle = "top" | "bottom" | "left" | "right";
 
 export type BlurViewProps = {
   blurStyle?: BlurStyle;
@@ -59,5 +58,5 @@ export const BlurView =
   UIManager.getViewManagerConfig(ComponentName) != null
     ? requireNativeComponent<BlurViewProps>(ComponentName)
     : () => {
-      throw new Error(LINKING_ERROR);
-    };
+        throw new Error(LINKING_ERROR);
+      };

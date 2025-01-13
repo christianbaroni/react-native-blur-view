@@ -81,6 +81,8 @@ class Blur: UIView {
       effectView!.subviews.dropFirst().forEach {
         $0.isHidden = true
       }
+    } else if type.lowercased.contains("material") {
+      effectView = SystemBlurView(bounds, UIBlurEffect.Style.from(string: type))
     } else {
       effectView = UIVisualEffectView(effect: UIBlurEffect(style: UIBlurEffect.Style.from(string: type)))
     }

@@ -5,7 +5,7 @@
 //  Created by Christian Baroni on 11/16/24.
 //
 
-class SystemBlurView: UIView {
+class SystemBlurView: UIVisualEffectView {
   private var blurEffectView: UIVisualEffectView
   private var blurEffect: UIBlurEffect?
   private var style: UIBlurEffect.Style
@@ -19,10 +19,11 @@ class SystemBlurView: UIView {
     self.blurEffectView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
     self.blurEffectView.frame = frame
 
-    super.init(frame: frame)
-
+    super.init(effect: nil)
+    
+    self.frame = frame
     self.clipsToBounds = true
-    addSubview(blurEffectView)
+    self.contentView.addSubview(blurEffectView)
     updateBlurEffect()
   }
 
