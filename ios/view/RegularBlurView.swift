@@ -1,3 +1,7 @@
+// MARK: - RegularBlurView.swift
+
+import UIKit
+
 class RegularBlurView: BaseBlurView {
   
   init(
@@ -6,7 +10,11 @@ class RegularBlurView: BaseBlurView {
     _ saturationIntensity: CGFloat,
     _ style: UIBlurEffect.Style
   ) {
-    super.init(frame, blurIntensity, saturationIntensity, .gaussian, style)
+    super.init(frame,
+               blurIntensity,
+               saturationIntensity,
+               .gaussian,
+               style)
   }
   
   required init?(coder: NSCoder) {

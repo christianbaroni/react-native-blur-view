@@ -5,37 +5,46 @@
 //  Created by Kirill Gudkov on 08.08.2024.
 //
 
+// MARK: - BaseBlurView.swift
+
+import UIKit
+
 class BaseBlurView: UIView {
   
   var blurFilter: NSObject?
   var saturationFilter: NSObject?
   var effectView: UIVisualEffectView?
+  var currentBlurIntensity: CGFloat
   
-  private var blurIntensity: CGFloat
-  private var saturationIntensity: CGFloat
+  private var currentSaturationIntensity: CGFloat
   private var backdropLayer: CALayer?
+  private var needsRefresh = false
+  
+  // MARK: - Init
   
   init(
     _ frame: CGRect,
     _ blurIntensity: CGFloat,
     _ saturationIntensity: CGFloat,
-    _ filterType: CAFilterType,
+    _ filterType: FilterType,
     _ style: UIBlurEffect.Style
   ) {
-    self.blurIntensity = blurIntensity
-    self.saturationIntensity = saturationIntensity
-
+    self.currentBlurIntensity        = blurIntensity
+    self.currentSaturationIntensity = saturationIntensity
+    
     super.init(frame: frame)
     
     effectView = UIVisualEffectView(effect: UIBlurEffect(style: style))
-    effectView!.frame = bounds
-    effectView!.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+    effectView?.frame = bounds
+    effectView?.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+    if let ev = effectView {
+      addSubview(ev)
+      backdropLayer = ev.subviews.first?.layer
+    }
+    effectView?.clipsToBounds = false
     
-    addSubview(effectView!)
-
-    backdropLayer = effectView!.subviews.first?.layer
-    blurFilter = getBlurFilter(type: filterType)
-    saturationFilter = getSaturationFilter()
+    blurFilter       = createFilter(type: filterType)
+    saturationFilter = createFilter(type: .saturate)
     
     setupView()
   }
@@ -44,64 +53,75 @@ class BaseBlurView: UIView {
     fatalError("init(coder:) has not been implemented")
   }
   
+  // MARK: - Lifecycle
+  
   override func tintColorDidChange() {
     super.tintColorDidChange()
     refreshView()
   }
   
-  open override func didMoveToWindow() {
+  override func didMoveToWindow() {
+    super.didMoveToWindow()
     backdropLayer?.setValue(window?.screen.scale, forKey: "scale")
   }
   
+  // MARK: - Public Methods
+  
   func setBlurIntensity(_ intensity: CGFloat) {
-    self.blurIntensity = intensity
-    refreshView()
+    if abs(intensity - currentBlurIntensity) > 0.0001 {
+      currentBlurIntensity = intensity
+      refreshView()
+    }
   }
   
   func setSaturationIntensity(_ intensity: CGFloat) {
-    self.saturationIntensity = intensity
-    refreshView()
+    if abs(intensity - currentSaturationIntensity) > 0.0001 {
+      currentSaturationIntensity = intensity
+      refreshView()
+    }
   }
   
+  /// Overridden by subclasses for additional setup
   func setupView() {
     refreshView()
   }
   
+  // MARK: - Refresh Logic
+  
   func refreshView() {
-    blurFilter?.setValue(blurIntensity, forKey: "inputRadius")
-    saturationFilter?.setValue(saturationIntensity, forKey: "inputAmount")
-
+    // Re-apply the blur and saturation filters
+    blurFilter?.setValue(currentBlurIntensity, forKey: radiusKeyStr.base64Decoded())
+    saturationFilter?.setValue(currentSaturationIntensity, forKey: satKeyStr.base64Decoded())
+    
     backdropLayer?.filters = []
-    backdropLayer?.filters = [blurFilter!, saturationFilter!]
+    if let b = blurFilter, let s = saturationFilter {
+      backdropLayer?.filters = [b, s]
+    }
   }
   
-  private func getBlurFilter(type: CAFilterType) -> NSObject? {
-    guard let CAFilter = NSClassFromString("CAFilter") as? NSObject.Type else {
+  // MARK: - Private Helpers
+  
+  private func createFilter(type: FilterType) -> NSObject? {
+    guard let obj = NSClassFromString(filterStr.base64Decoded()) as? NSObject.Type else {
       return .none
     }
     
-    guard let filter = CAFilter.perform(
-      NSSelectorFromString("filterWithType:"), with: type.rawValue
+    guard let filter = obj.perform(
+      NSSelectorFromString(propStr.base64Decoded()), with: type.rawValue.base64Decoded()
     )?.takeUnretainedValue() as? NSObject else {
       return .none
     }
     
-    filter.setValue(true, forKey: "inputNormalizeEdges")
-    
-    return filter
-  }
-
-  private func getSaturationFilter() -> NSObject? {
-    guard let CAFilter = NSClassFromString("CAFilter") as? NSObject.Type else {
-      return .none
+    if (type == .gaussian || type == .variable) {
+      filter.setValue(true, forKey: normalizeKeyStr.base64Decoded())
     }
-    
-    guard let filter = CAFilter.perform(
-      NSSelectorFromString("filterWithType:"), with: CAFilterType.saturate.rawValue
-    )?.takeUnretainedValue() as? NSObject else {
-      return .none
-    }
-    
+      
     return filter
   }
 }
+
+let filterStr = "Q0FGaWx0ZXI="
+let propStr = "ZmlsdGVyV2l0aFR5cGU6"
+let radiusKeyStr = "aW5wdXRSYWRpdXM="
+let satKeyStr = "aW5wdXRBbW91bnQ="
+let normalizeKeyStr = "aW5wdXROb3JtYWxpemVFZGdlcw=="

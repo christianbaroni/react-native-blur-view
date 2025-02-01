@@ -1,6 +1,6 @@
 {
   "name": "react-native-blur-view",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "description",
   "source": "./src/index.tsx",
   "main": "./src/index",
@@ -39,14 +39,14 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/kirgudkov/react-native-blur-view.git"
+    "url": "git+https://github.com/christianbaroni/react-native-blur-view.git"
   },
   "author": "Kirill Gudkov <for.example.nickname@gmail.com> (https://github.com/kirgudkov)",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/kirgudkov/react-native-blur-view/issues"
+    "url": "https://github.com/christianbaroni/react-native-blur-view/issues"
   },
-  "homepage": "https://github.com/kirgudkov/react-native-blur-view#readme",
+  "homepage": "https://github.com/christianbaroni/react-native-blur-view#readme",
   "publishConfig": {
     "registry": "https://registry.npmjs.org/"
   },

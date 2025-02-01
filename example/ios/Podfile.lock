@@ -935,7 +935,7 @@ PODS:
   - React-Mapbuffer (0.74.5):
     - glog
     - React-debug
-  - react-native-blur-view (0.1.0):
+  - react-native-blur-view (1.0.0):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -1487,7 +1487,7 @@ SPEC CHECKSUMS:
   React-jsitracing: 3b6060bbf5317663667e1dd93560c7943ab86ccc
   React-logger: 257858bd55f3a4e1bc0cf07ddc8fb9faba6f8c7c
   React-Mapbuffer: 6c1cacdbf40b531f549eba249e531a7d0bfd8e7f
-  react-native-blur-view: c01dfd241ddbd3d843a748a242227bebad808aad
+  react-native-blur-view: 0a38643f43b190eb7e433c4cf5b1f7a92d2222b9
   react-native-slider: ce295d2bf830a7990af05b0bd70ab28c133e230c
   React-nativeconfig: ba9a2e54e2f0882cf7882698825052793ed4c851
   React-NativeModulesApple: 8d11ff8955181540585c944cf48e9e7236952697
@@ -1518,4 +1518,4 @@ SPEC CHECKSUMS:
 
 PODFILE CHECKSUM: 432b006b82cbcf58ed5207833e0f4d0ece24289d
 
-COCOAPODS: 1.14.3
+COCOAPODS: 1.16.2

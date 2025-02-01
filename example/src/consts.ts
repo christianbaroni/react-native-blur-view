@@ -1,22 +1,23 @@
-import { Dimensions, DynamicColorIOS } from 'react-native';
+import { Dimensions, DynamicColorIOS } from "react-native";
 
 export default {
+  borderColor: DynamicColorIOS({
+    light: "rgba(9, 17, 31, 0.04)",
+    dark: "rgba(245, 248, 255, 0.08)",
+  }),
   color: {
-    accent: DynamicColorIOS({
-      dark: '#a64747',
-      light: '#ff7777',
-    }),
+    accent: "#007AFF",
     text: {
-      light: '#eee',
-      dark: '#333',
+      light: "#eee",
+      dark: "#333",
       dynamic: DynamicColorIOS({
-        dark: '#ddd',
-        light: '#444',
+        dark: "#ddd",
+        light: "#444",
       }),
     },
   },
   screen: {
-    width: Dimensions.get('window').width,
-    height: Dimensions.get('window').height,
+    width: Dimensions.get("window").width,
+    height: Dimensions.get("window").height,
   },
 };

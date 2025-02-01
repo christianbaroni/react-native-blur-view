@@ -1,62 +1,79 @@
-import { StyleSheet, View, Text, ScrollView } from 'react-native';
-import { BlurView } from 'react-native-blur-view';
-import { DynamicExample } from './DynamicExample';
-import consts from './consts';
+import { StyleSheet, Text, ScrollView } from "react-native";
+import { AnimatedBlurView, DynamicExample, START_VALUES, type VariableBlurSettings } from "./DynamicExample";
+import consts from "./consts";
+import { runOnUI, useAnimatedProps, useAnimatedStyle, useSharedValue } from "react-native-reanimated";
+import { useCallback } from "react";
 
-export const App = () => (
-  <>
-    <ScrollView
-      showsVerticalScrollIndicator={false}
-    >
-      <DynamicExample />
-      <Text style={styles.text}>
-        {text.repeat(10)}
-      </Text>
-    </ScrollView>
+export const App = () => {
+  const variableBlurProps = useSharedValue<VariableBlurSettings>({
+    blurIntensity: START_VALUES.variableBlur.blurIntensity,
+    feather: START_VALUES.variableBlur.feather,
+    height: START_VALUES.variableBlur.height,
+  });
 
-    <View
-      pointerEvents={'none'}
-      style={styles.top}
-    >
-      <BlurView
-        blurIntensity={4}
-        style={StyleSheet.absoluteFill}
+  const blurViewProps = useAnimatedProps(() => ({
+    blurIntensity: variableBlurProps.value.blurIntensity,
+    feather: variableBlurProps.value.feather,
+  }));
+
+  const heightStyle = useAnimatedStyle(() => ({ height: variableBlurProps.value.height, width: consts.screen.width }));
+
+  const updateVariableBlur = useCallback((prop: keyof VariableBlurSettings, value: number) => {
+    runOnUI(() => {
+      const propToSet = prop;
+      variableBlurProps.modify((props) => ({
+        ...props,
+        [propToSet]: value,
+      }));
+    })();
+  }, []);
+
+  return (
+    <>
+      <ScrollView showsVerticalScrollIndicator={false}>
+        <DynamicExample updateVariableBlur={updateVariableBlur} variableBlurSettings={variableBlurProps} />
+        <Text style={styles.text}>{text.repeat(10)}</Text>
+      </ScrollView>
+
+      <AnimatedBlurView
+        animatedProps={blurViewProps}
+        blurStyle="variable"
         gradientPoints={[
-          { x: 0, y: TOP_INSET },
-          { x: 0, y: 0 },
+          { x: 0.5, y: 1 },
+          { x: 0.5, y: 0 },
         ]}
+        style={[styles.top, heightStyle]}
       />
-    </View>
 
-    <View
-      pointerEvents={'none'}
-      style={styles.bottom}
-    >
-      <BlurView
-        blurIntensity={4}
-        style={StyleSheet.absoluteFill}
+      <AnimatedBlurView
+        animatedProps={blurViewProps}
+        blurStyle="variable"
+        gradientPoints={[
+          { x: 0.5, y: 0 },
+          { x: 0.5, y: 1 },
+        ]}
+        style={[styles.bottom, heightStyle]}
       />
-    </View>
-  </>
-);
-
-const TOP_INSET = 70;
-const BOTTOM_INSET = 60;
+    </>
+  );
+};
 
 const styles = StyleSheet.create({
   bottom: {
-    position: 'absolute',
-    overflow: 'hidden',
-
-    left: 0, right: 0,
-    bottom: 0, height: BOTTOM_INSET,
+    left: 0,
+    overflow: "visible",
+    pointerEvents: "none",
+    position: "absolute",
+    right: 0,
+    bottom: 0,
   },
   top: {
-    position: 'absolute',
-    overflow: 'hidden',
-
-    left: 0, right: 0,
-    top: 0, height: TOP_INSET,
+    left: 0,
+    overflow: "visible",
+    pointerEvents: "none",
+    position: "absolute",
+    right: 0,
+    top: 0,
   },
   text: {
     marginHorizontal: 20,
@@ -67,4 +84,5 @@ const styles = StyleSheet.create({
   },
 });
 
-const text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.";
+const text =
+  "Lorem ipsum dolor sit amet, consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.";

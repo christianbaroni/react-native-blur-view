@@ -5,6 +5,10 @@
 //  Created by Kirill Gudkov on 08.08.2024.
 //
 
+// MARK: - PlainBlurView.swift
+
+import UIKit
+
 class PlainBlurView: BaseBlurView {
   
   init(
@@ -12,7 +16,11 @@ class PlainBlurView: BaseBlurView {
     _ blurIntensity: CGFloat,
     _ saturationIntensity: CGFloat
   ) {
-    super.init(frame, blurIntensity, saturationIntensity, .gaussian,  .regular)
+    super.init(frame,
+               blurIntensity,
+               saturationIntensity,
+               .gaussian,
+               .regular)
   }
   
   required init?(coder: NSCoder) {
@@ -23,6 +31,6 @@ class PlainBlurView: BaseBlurView {
     effectView?.subviews.dropFirst().forEach {
       $0.isHidden = true
     }
-    refreshView()
+    super.setupView()
   }
 }
