@@ -4,13 +4,13 @@ import UIKit
 
 class BlurView: UIView {
   
-  private let VIEW_TAG = 9999
+  private lazy var blurView: UIView = createBlurView()
   
   @objc var feather: CGFloat = 8.0 {
     didSet {
       let clamped = clamp(feather, min: 0.0, max: 50.0)
       if abs(clamped - oldValue) > 0.0001,
-         let variableView = viewWithTag(VIEW_TAG) as? VariableBlurView {
+         let variableView = blurView as? VariableBlurView {
         variableView.setFeather(clamped)
       }
     }
@@ -18,22 +18,16 @@ class BlurView: UIView {
   
   @objc var gradientPoints: NSArray? {
     didSet {
-      guard let variableView = viewWithTag(VIEW_TAG) as? VariableBlurView else {
-        return
-      }
-      if !areArraysEqual(oldValue, gradientPoints) {
-        variableView.setGradientPoints(gradientPoints)
-      }
+      (blurView as? VariableBlurView)?.setGradientPoints(gradientPoints)
     }
   }
   
   @objc var blurStyle: NSString = "regular" {
     didSet {
       if blurStyle.lowercased != oldValue.lowercased {
-        if let oldBlurView = viewWithTag(VIEW_TAG) {
-          oldBlurView.removeFromSuperview()
-        }
-        addSubview(createBlurView(blurStyle))
+        blurView.removeFromSuperview()
+        blurView = createBlurView()
+        addSubview(blurView)
       }
     }
   }
@@ -42,7 +36,7 @@ class BlurView: UIView {
     didSet {
       let clamped = clamp(blurIntensity, min: 0.0, max: 100.0)
       if abs(clamped - oldValue) > 0.0001,
-         let baseView = viewWithTag(VIEW_TAG) as? BaseBlurView {
+         let baseView = blurView as? BaseBlurView {
         baseView.setBlurIntensity(clamped)
       }
     }
@@ -52,7 +46,7 @@ class BlurView: UIView {
     didSet {
       let clamped = clamp(saturationIntensity, min: 0.0, max: 3.0)
       if abs(clamped - oldValue) > 0.0001,
-         let baseView = viewWithTag(VIEW_TAG) as? BaseBlurView {
+         let baseView = blurView as? BaseBlurView {
         baseView.setSaturationIntensity(clamped)
       }
     }
@@ -62,7 +56,7 @@ class BlurView: UIView {
   
   override init(frame: CGRect) {
     super.init(frame: frame)
-    addSubview(createBlurView(blurStyle))
+    addSubview(blurView)
   }
   
   required init?(coder: NSCoder) {
@@ -71,27 +65,25 @@ class BlurView: UIView {
   
   // MARK: - Private
   
-  private func createBlurView(_ style: NSString) -> UIView {
+  private func createBlurView() -> UIView {
     let clampedBlur       = clamp(blurIntensity,      min: 0.0, max: 100.0)
     let clampedSaturation = clamp(saturationIntensity, min: 0.0, max: 3.0)
     let clampedFeather    = clamp(feather,            min: 0.0, max: 50.0)
     
-    let lower = style.lowercased
+    let lower = blurStyle.lowercased
     let isSystemMaterial = lower.contains("material")
     
     let blurSubview: UIView
-    if style == "plain" {
-      blurSubview = PlainBlurView(frame, clampedBlur, clampedSaturation)
-    } else if style == "variable" {
-      blurSubview = VariableBlurView(frame, clampedBlur, clampedSaturation, gradientPoints, clampedFeather)
+    if blurStyle == "plain" {
+      blurSubview = PlainBlurView(bounds, clampedBlur, clampedSaturation)
+    } else if blurStyle == "variable" {
+      blurSubview = VariableBlurView(bounds, clampedBlur, clampedSaturation, gradientPoints, clampedFeather)
     } else if isSystemMaterial {
-      blurSubview = SystemBlurView(frame, UIBlurEffect.Style.from(string: style))
+      blurSubview = SystemBlurView(bounds, UIBlurEffect.Style.from(string: blurStyle))
     } else {
-      blurSubview = RegularBlurView(frame, clampedBlur, clampedSaturation, UIBlurEffect.Style.from(string: style))
+      blurSubview = RegularBlurView(bounds, clampedBlur, clampedSaturation, UIBlurEffect.Style.from(string: blurStyle))
     }
     
-    blurSubview.tag = VIEW_TAG
-    blurSubview.frame = bounds
     blurSubview.autoresizingMask = [.flexibleWidth, .flexibleHeight]
     return blurSubview
   }
