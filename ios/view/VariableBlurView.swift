@@ -15,7 +15,7 @@ class VariableBlurView: BaseBlurView {
   private var requestedFeather: CGFloat = 0
   private var appliedFeather: CGFloat = 0
   private var gradientPoints: NSArray?
-  private var lastKnownBounds: CGRect = .zero
+  private var maskBounds: CGRect?
 
   private static let transparentPixel: CGImage? = {
     let context = CGContext(
@@ -96,7 +96,7 @@ class VariableBlurView: BaseBlurView {
     
     guard bounds.width > 0, bounds.height > 0 else { return }
     
-    if bounds != lastKnownBounds {
+    if bounds != maskBounds {
       applyDimensionClamps()
       buildGradientMask()
     }
@@ -116,6 +116,7 @@ class VariableBlurView: BaseBlurView {
   // MARK: - Public Methods
   
   override func setBlurIntensity(_ intensity: CGFloat) {
+    guard intensity != requestedBlurIntensity || bounds != maskBounds else { return }
     requestedBlurIntensity = intensity
     applyDimensionClamps()
     buildGradientMask()
@@ -132,6 +133,7 @@ class VariableBlurView: BaseBlurView {
   func setGradientPoints(_ array: NSArray?) {
     if !areArraysEqual(gradientPoints, array) {
       gradientPoints = array
+      maskBounds = nil
       applyDimensionClamps()
       buildGradientMask()
     }
@@ -140,6 +142,8 @@ class VariableBlurView: BaseBlurView {
   // MARK: - Private Methods
 
   private func buildGradientMask() {
+    guard bounds != maskBounds else { return }
+    maskBounds = nil
     guard bounds.width > 0, bounds.height > 0 else { return }
     
     let (maskRect, croppedImage) = computeGradientMask()
@@ -147,7 +151,7 @@ class VariableBlurView: BaseBlurView {
     let context = CIContextManager.shared
     guard let mask = context.createCGImage(croppedImage, from: maskRect) else { return }
     blurFilter?.setValue(mask, forKey: gradientKeyStr.base64Decoded())
-    lastKnownBounds = bounds
+    maskBounds = bounds
     refreshView()
   }
   
@@ -264,7 +268,10 @@ class VariableBlurView: BaseBlurView {
     if abs(newBlur - super.currentBlurIntensity) > 0.0001 {
       super.setBlurIntensity(newBlur)
     }
-    appliedFeather = newFeather
+    if appliedFeather != newFeather {
+      appliedFeather = newFeather
+      maskBounds = nil
+    }
   }
   
   private func areArraysEqual(_ array1: NSArray?, _ array2: NSArray?) -> Bool {
