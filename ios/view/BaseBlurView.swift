@@ -17,8 +17,7 @@ class BaseBlurView: UIView {
   var currentBlurIntensity: CGFloat
   
   private var currentSaturationIntensity: CGFloat
-  private var backdropLayer: CALayer?
-  private var needsRefresh = false
+  private static let backdropLayerClass: AnyClass? = NSClassFromString("Q0FCYWNrZHJvcExheWVy".base64Decoded())
   
   // MARK: - Init
   
@@ -39,7 +38,6 @@ class BaseBlurView: UIView {
     effectView?.autoresizingMask = [.flexibleWidth, .flexibleHeight]
     if let ev = effectView {
       addSubview(ev)
-      backdropLayer = ev.subviews.first?.layer
     }
     effectView?.clipsToBounds = false
     
@@ -52,6 +50,10 @@ class BaseBlurView: UIView {
   required init?(coder: NSCoder) {
     fatalError("init(coder:) has not been implemented")
   }
+
+  deinit {
+    NotificationCenter.default.removeObserver(self)
+  }
   
   // MARK: - Lifecycle
   
@@ -62,7 +64,17 @@ class BaseBlurView: UIView {
   
   override func didMoveToWindow() {
     super.didMoveToWindow()
-    backdropLayer?.setValue(window?.screen.scale, forKey: "scale")
+    let notifications = NotificationCenter.default
+    notifications.removeObserver(self, name: UIApplication.didBecomeActiveNotification, object: nil)
+    guard window != nil else { return }
+
+    notifications.addObserver(
+      self,
+      selector: #selector(applicationDidBecomeActive),
+      name: UIApplication.didBecomeActiveNotification,
+      object: nil
+    )
+    refreshView()
   }
   
   // MARK: - Public Methods
@@ -89,18 +101,37 @@ class BaseBlurView: UIView {
   // MARK: - Refresh Logic
   
   func refreshView() {
+    guard let effectView, let backdropLayer = findBackdropLayer(in: effectView) else { return }
+    if let screen = window?.screen {
+      backdropLayer.setValue(screen.scale, forKey: "scale")
+    }
+
     // Re-apply the blur and saturation filters
     blurFilter?.setValue(currentBlurIntensity, forKey: radiusKeyStr.base64Decoded())
     saturationFilter?.setValue(currentSaturationIntensity, forKey: satKeyStr.base64Decoded())
     
-    backdropLayer?.filters = []
+    backdropLayer.filters = []
     if let b = blurFilter, let s = saturationFilter {
-      backdropLayer?.filters = [b, s]
+      backdropLayer.filters = [b, s]
     }
   }
   
   // MARK: - Private Helpers
   
+  @objc private func applicationDidBecomeActive(_ notification: Notification) {
+    // UIKit can replace our filters while restoring its visual effect views.
+    refreshView()
+  }
+
+  private func findBackdropLayer(in view: UIView) -> CALayer? {
+    guard let backdropLayerClass = Self.backdropLayerClass else { return nil }
+    if view.layer.isKind(of: backdropLayerClass) { return view.layer }
+    for subview in view.subviews {
+      if let layer = findBackdropLayer(in: subview) { return layer }
+    }
+    return nil
+  }
+
   private func createFilter(type: FilterType) -> NSObject? {
     guard let obj = NSClassFromString(filterStr.base64Decoded()) as? NSObject.Type else {
       return .none
