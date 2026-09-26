@@ -38,7 +38,6 @@ export const BlurViewStyles = [...customStyles, ...standardStyles, ...systemMate
 export type BlurStyle = (typeof BlurViewStyles)[number];
 export type GradientPoints = [from: { x: number; y: number }, to: { x: number; y: number }];
 
-type CustomStyle = (typeof customStyles)[number];
 type StandardStyle = (typeof standardStyles)[number];
 type SystemMaterial = (typeof systemMaterialStyles)[number];
 
@@ -48,7 +47,8 @@ interface BaseBlurViewProps {
 
 export interface StandardBlurProps extends BaseBlurViewProps {
   blurIntensity?: number;
-  blurStyle?: CustomStyle | StandardStyle;
+  blurStyle?: "plain" | StandardStyle;
+  feather?: never;
   gradientPoints?: never;
   saturationIntensity?: number;
 }
@@ -56,13 +56,14 @@ export interface StandardBlurProps extends BaseBlurViewProps {
 export interface SystemMaterialBlurProps extends BaseBlurViewProps {
   blurIntensity?: never;
   blurStyle: SystemMaterial;
+  feather?: never;
   gradientPoints?: never;
   saturationIntensity?: never;
 }
 
 export interface VariableBlurProps extends BaseBlurViewProps {
   blurIntensity?: number;
-  blurStyle?: "variable";
+  blurStyle: "variable";
   feather?: number;
   gradientPoints?: GradientPoints;
   saturationIntensity?: number;

@@ -40,9 +40,12 @@ import { BlurView } from 'react-native-blur-view';
 
 | Name                  | Type                                                                        | Default     | Description                                                                                                                        |
 |-----------------------|-----------------------------------------------------------------------------|-------------|------------------------------------------------------------------------------------------------------------------------------------|
-| `blurStyle`           | `variable \| plain \| regular \| light \| extraLight \| dark` | `variable`  | Blur style.                                                                                                                        |
+| `blurStyle`           | `BlurStyle` | `regular`   | Blur style. The exported `BlurViewStyles` array lists all available styles.                                                                                                                        |
 | `blurIntensity`       | `number`                                                                    | `10.0`      | Blur intensity. Varies from `0.0` to `100.0`                                                                                       |
 | `saturationIntensity` | `number`                                                                    | `1.0`       | Saturation intensity. Varies from `0.0` to `3.0`                                                                                   |
 | `gradientPoints`      | `[{ x: number, y: number }, { x: number, y: number }]`                                              | `undefined` | Gradient points for `variable` blur style. If not provided, gradient mask will be stretched to view height in bottom-top direction |
 | `style`               | `ViewStyle`                                                                 | `undefined` | Style for the view.                                                                                                                |
 
+Omitting `blurStyle` uses `regular`. Set `blurStyle="variable"` to use
+`gradientPoints` or `feather` (default `8`, range `0`–`50`). System material styles
+use system-controlled blur and saturation intensity.
