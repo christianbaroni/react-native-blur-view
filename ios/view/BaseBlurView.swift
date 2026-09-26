@@ -110,10 +110,16 @@ class BaseBlurView: UIView {
     blurFilter?.setValue(currentBlurIntensity, forKey: radiusKeyStr.base64Decoded())
     saturationFilter?.setValue(currentSaturationIntensity, forKey: satKeyStr.base64Decoded())
     
-    backdropLayer.filters = []
     if let b = blurFilter, let s = saturationFilter {
-      backdropLayer.filters = [b, s]
+      applyFilters([b, s], to: backdropLayer)
+    } else {
+      applyFilters([], to: backdropLayer)
     }
+  }
+
+  func applyFilters(_ filters: [NSObject], to backdropLayer: CALayer) {
+    backdropLayer.filters = []
+    backdropLayer.filters = filters
   }
   
   // MARK: - Private Helpers

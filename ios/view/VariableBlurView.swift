@@ -16,6 +16,17 @@ class VariableBlurView: BaseBlurView {
   private var appliedFeather: CGFloat = 0
   private var gradientPoints: NSArray?
   private var lastKnownBounds: CGRect = .zero
+
+  private static let transparentPixel: CGImage? = {
+    let context = CGContext(
+      data: nil, width: 1, height: 1, bitsPerComponent: 8, bytesPerRow: 4,
+      space: CGColorSpaceCreateDeviceRGB(),
+      bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue
+    )
+    return context?.makeImage()
+  }()
+  private let filterSurface = UIView()
+  private let transparentInput = UIView()
   
   private let gradient = CIFilter.linearGradient()
   private lazy var clampFilter = CIFilter.affineClamp()
@@ -54,7 +65,18 @@ class VariableBlurView: BaseBlurView {
     gradient.color1 = .clear
     
     effectView?.subviews.dropFirst().forEach { $0.isHidden = true }
+    clipsToBounds = true
+    // Image contents preserve a clear input extent that an empty view would lose.
+    transparentInput.layer.contents = Self.transparentPixel
+    filterSurface.addSubview(transparentInput)
+    addSubview(filterSurface)
+    if let effectView {
+      effectView.autoresizingMask = []
+      effectView.removeFromSuperview()
+      filterSurface.addSubview(effectView)
+    }
     super.setupView()
+    setNeedsLayout()
     
     if bounds.width > 0, bounds.height > 0 {
       applyDimensionClamps()
@@ -64,14 +86,31 @@ class VariableBlurView: BaseBlurView {
   
   override func layoutSubviews() {
     super.layoutSubviews()
+
+    filterSurface.frame = bounds
+    effectView?.frame = filterSurface.bounds
+    let scale = max(window?.screen.scale ?? traitCollection.displayScale, 1)
+    // Cover source-clamp rounding and one clear texel before mip generation.
+    // This extends transparent input, never the backdrop's capture rectangle.
+    transparentInput.frame = filterSurface.bounds.insetBy(dx: -2 / scale, dy: -2 / scale)
     
     guard bounds.width > 0, bounds.height > 0 else { return }
     
     if bounds != lastKnownBounds {
-      lastKnownBounds = bounds
       applyDimensionClamps()
       buildGradientMask()
     }
+  }
+
+  override func didMoveToWindow() {
+    super.didMoveToWindow()
+    setNeedsLayout()
+  }
+
+  override func applyFilters(_ filters: [NSObject], to backdropLayer: CALayer) {
+    backdropLayer.filters = []
+    filterSurface.layer.filters = []
+    filterSurface.layer.filters = filters
   }
   
   // MARK: - Public Methods
@@ -99,18 +138,16 @@ class VariableBlurView: BaseBlurView {
   }
   
   // MARK: - Private Methods
-  
+
   private func buildGradientMask() {
     guard bounds.width > 0, bounds.height > 0 else { return }
     
     let (maskRect, croppedImage) = computeGradientMask()
     
     let context = CIContextManager.shared
-    guard let cgMask = context.createCGImage(croppedImage, from: maskRect) else {
-      return
-    }
-    
-    blurFilter?.setValue(cgMask, forKey: gradientKeyStr.base64Decoded())
+    guard let mask = context.createCGImage(croppedImage, from: maskRect) else { return }
+    blurFilter?.setValue(mask, forKey: gradientKeyStr.base64Decoded())
+    lastKnownBounds = bounds
     refreshView()
   }
   
